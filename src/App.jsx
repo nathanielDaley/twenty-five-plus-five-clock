@@ -1,7 +1,6 @@
 import "./App.css";
 import Clock from "./components/Clock/Clock";
 import gitHubIcon from "./assets/github.svg";
-import { useEffect, useState } from "react";
 
 function App() {
   return (

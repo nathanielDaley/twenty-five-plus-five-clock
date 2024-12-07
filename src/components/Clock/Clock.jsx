@@ -2,7 +2,7 @@ import "./Clock.css";
 import { useEffect, useState } from "react";
 import {
   defaultBreakTime,
-  defaultWorkTime,
+  defaultSessionTime,
   minTime,
   maxTime,
   interval,
@@ -12,22 +12,23 @@ import Display from "../Display/Display.jsx";
 
 function Clock() {
   const [breakTime, setBreakTime] = useState(defaultBreakTime);
-  const [workTime, setWorkTime] = useState(defaultWorkTime);
-  const [sessionTime, setSessionTime] = useState(defaultWorkTime);
+  const [sessionTime, setSessionTime] = useState(defaultSessionTime);
+  const [currentTime, setCurrentTime] = useState(defaultSessionTime);
   const [timerRunning, setTimerRunning] = useState(false);
-  const [timeType, setTimeType] = useState("Work");
+  const [timeType, setTimeType] = useState("Session");
 
   useEffect(() => {
-    const interval = setInterval(() => decrementSessionTimer(), 1000);
+    const interval = setInterval(() => decrementcurrentTimer(), 1000);
 
     return () => clearInterval(interval);
-  }, [sessionTime, timerRunning]);
+  }, [currentTime, timerRunning]);
 
   const resetClock = () => {
     setBreakTime(defaultBreakTime);
-    setWorkTime(defaultWorkTime);
-    setSessionTime(defaultWorkTime);
+    setSessionTime(defaultSessionTime);
+    setCurrentTime(defaultSessionTime);
     setTimerRunning(false);
+    setTimeType("Session");
 
     document.getElementById("beep").pause();
     document.getElementById("beep").currentTime = 0;
@@ -42,29 +43,27 @@ function Clock() {
     setBreakTime(time);
   };
 
-  const changeWorkTime = (time) => {
+  const changeSessionTime = (time) => {
     if (timerRunning) return;
-    setWorkTime(time);
     setSessionTime(time);
+    setCurrentTime(time);
   };
 
-  const decrementSessionTimer = () => {
+  const decrementcurrentTimer = () => {
     if (!timerRunning) return;
-    let newSessionTime = Math.floor(sessionTime - 1);
-    if (newSessionTime <= 0) {
-      newSessionTime = 0;
 
+    if (currentTime === 0) {
       document.getElementById("beep").play().catch(console.error);
 
-      if (timeType === "Work") {
+      if (timeType === "Session") {
         setTimeType("Break");
-        setSessionTime(breakTime);
+        setCurrentTime(breakTime);
       } else {
-        setTimeType("Work");
-        setSessionTime(workTime);
+        setTimeType("Session");
+        setCurrentTime(sessionTime);
       }
     } else {
-      setSessionTime(newSessionTime);
+      setCurrentTime(currentTime - 1);
     }
   };
 
@@ -86,21 +85,21 @@ function Clock() {
         </div>
         <div className="clock__setters-divider col-sm-4"> </div>
         <div className="clock__work col-sm-4 d-flex flex-column align-items-center">
-          <h4 is="session-label" className="clock__work-label">
-            Work Length
+          <h4 id="session-label" className="clock__work-label">
+            Session Length
           </h4>
           <TimeSetter
-            time={workTime}
-            setTime={changeWorkTime}
+            time={sessionTime}
+            setTime={changeSessionTime}
             min={minTime}
             max={maxTime}
             interval={interval}
-            type={"work"}
+            type={"session"}
           />
         </div>
       </div>
       <Display
-        sessionTime={sessionTime}
+        currentTime={currentTime}
         timerRunning={timerRunning}
         onStartStop={startStopClock}
         onReset={resetClock}
