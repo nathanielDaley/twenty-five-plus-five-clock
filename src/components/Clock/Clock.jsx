@@ -1,5 +1,5 @@
 import "./Clock.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   defaultBreakTime,
   defaultWorkTime,
@@ -16,12 +16,47 @@ function Clock() {
   const [sessionTime, setSessionTime] = useState(defaultWorkTime);
   const [timerRunning, setTimerRunning] = useState(false);
 
+  useEffect(() => {
+    const interval = setInterval(() => decrementSessionTimer(), 1000);
+
+    return () => clearInterval(interval);
+  }, [sessionTime, timerRunning]);
+
   const resetClock = () => {
-    console.log("reset");
+    setBreakTime(defaultBreakTime);
+    setWorkTime(defaultWorkTime);
+    setSessionTime(defaultWorkTime);
+    setTimerRunning(false);
+
+    document.getElementById("beep").pause();
+    document.getElementById("beep").currentTime = 0;
   };
 
   const startStopClock = () => {
-    console.log("start-stop");
+    setTimerRunning(!timerRunning);
+  };
+
+  const changeBreakTime = (time) => {
+    if (timerRunning) return;
+    setBreakTime(time);
+  };
+
+  const changeWorkTime = (time) => {
+    if (timerRunning) return;
+    setWorkTime(time);
+    setSessionTime(time);
+  };
+
+  const decrementSessionTimer = () => {
+    if (!timerRunning) return;
+    let newSessionTime = Math.floor(sessionTime - 1);
+    if (newSessionTime <= 0) {
+      newSessionTime = 0;
+      setTimerRunning(false);
+      document.getElementById("beep").play().catch(console.error);
+    }
+
+    setSessionTime(newSessionTime);
   };
 
   return (
@@ -33,7 +68,7 @@ function Clock() {
           </h4>
           <TimeSetter
             time={breakTime}
-            setTime={setBreakTime}
+            setTime={changeBreakTime}
             min={minTime}
             max={maxTime}
             interval={interval}
@@ -47,7 +82,7 @@ function Clock() {
           </h4>
           <TimeSetter
             time={workTime}
-            setTime={setWorkTime}
+            setTime={changeWorkTime}
             min={minTime}
             max={maxTime}
             interval={interval}

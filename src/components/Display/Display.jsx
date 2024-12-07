@@ -6,14 +6,16 @@ function Display({ sessionTime, timerRunning, onStartStop, onReset }) {
   const seconds = Math.floor(sessionTime % 60);
   return (
     <div className="display d-flex flex-column align-items-center">
-      <h4 id="timer-label" className="display__label">
-        {`${minutes} : ${seconds === 0 ? "00" : seconds}`}
+      <h4
+        id="timer-label"
+        className={`display__label fs-1 ${
+          timerRunning ? "text-danger" : "text-dark"
+        }`}
+      >
+        {`${minutes === 0 ? "00" : minutes} : ${
+          seconds === 0 ? "00" : seconds
+        }`}
       </h4>
-      <span
-        id="time-left"
-        className="display__time-left"
-        style={{ color: `${timerRunning ? "red" : "white"}` }}
-      ></span>
       <div className="display__buttons">
         <button
           id="start_stop"
