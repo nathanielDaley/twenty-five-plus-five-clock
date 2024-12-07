@@ -1,21 +1,30 @@
 import "./Display.css";
 import { FaPause, FaPlay, FaUndo } from "react-icons/fa";
 
-function Display({ sessionTime, timerRunning, onStartStop, onReset }) {
+function Display({
+  sessionTime,
+  timerRunning,
+  onStartStop,
+  onReset,
+  timeType,
+}) {
   const minutes = Math.floor(sessionTime / 60);
   const seconds = Math.floor(sessionTime % 60);
   return (
     <div className="display d-flex flex-column align-items-center">
-      <h4
-        id="timer-label"
-        className={`display__label fs-1 ${
+      <h4 id="timer-label" className={`display__label fs-2`}>
+        {timeType}
+      </h4>
+      <span
+        id="time-left"
+        className={`display__timer fs-1 ${
           timerRunning ? "text-danger" : "text-dark"
         }`}
       >
         {`${minutes === 0 ? "00" : minutes} : ${
           seconds === 0 ? "00" : seconds
         }`}
-      </h4>
+      </span>
       <div className="display__buttons">
         <button
           id="start_stop"

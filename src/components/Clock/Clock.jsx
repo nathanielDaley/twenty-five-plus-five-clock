@@ -15,6 +15,7 @@ function Clock() {
   const [workTime, setWorkTime] = useState(defaultWorkTime);
   const [sessionTime, setSessionTime] = useState(defaultWorkTime);
   const [timerRunning, setTimerRunning] = useState(false);
+  const [timeType, setTimeType] = useState("Work");
 
   useEffect(() => {
     const interval = setInterval(() => decrementSessionTimer(), 1000);
@@ -52,11 +53,19 @@ function Clock() {
     let newSessionTime = Math.floor(sessionTime - 1);
     if (newSessionTime <= 0) {
       newSessionTime = 0;
-      setTimerRunning(false);
-      document.getElementById("beep").play().catch(console.error);
-    }
 
-    setSessionTime(newSessionTime);
+      document.getElementById("beep").play().catch(console.error);
+
+      if (timeType === "Work") {
+        setTimeType("Break");
+        setSessionTime(breakTime);
+      } else {
+        setTimeType("Work");
+        setSessionTime(workTime);
+      }
+    } else {
+      setSessionTime(newSessionTime);
+    }
   };
 
   return (
@@ -95,6 +104,7 @@ function Clock() {
         timerRunning={timerRunning}
         onStartStop={startStopClock}
         onReset={resetClock}
+        timeType={timeType}
       />
       <audio
         id="beep"
