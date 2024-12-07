@@ -4,8 +4,8 @@ import gitHubIcon from "./assets/github.svg";
 
 function App() {
   return (
-    <div className="page">
-      <div className={`app d-flex justify-content-center align-items-center`}>
+    <div className="page bg-primary-subtle">
+      <div className="app d-flex justify-content-center align-items-center">
         <Clock />
       </div>
       <footer class="footer fixed-bottom bg-dark text-white">
